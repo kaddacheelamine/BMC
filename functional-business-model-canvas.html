@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Model Canvas</title>
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --success-color: #2ecc71;
+      --danger-color: #e74c3c;
+      --neutral-color: #f5f5f5;
+      --border-color: #ddd;
+      --text-primary: #333;
+      --text-secondary: #666;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --border-radius: 6px;
+      --section-padding: 15px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text-primary);
+      line-height: 1.6;
+      background-color: #f9f9f9;
+      padding: 20px;
+    }
+
+    .wrapper {
+      margin: auto;
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    header {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    h1 {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin: 0;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #2980b9;
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      color: var(--primary-color);
+      border: 1px solid var(--primary-color);
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(52, 152, 219, 0.1);
+    }
+
+    .bmc {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      grid-auto-rows: minmax(200px, auto);
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .bmc-section {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: var(--section-padding);
+      box-shadow: var(--box-shadow);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      border-top: 4px solid var(--primary-color);
+    }
+
+    .bmc-section h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--text-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .add-note {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .notes-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex-grow: 1;
+      overflow-y: auto;
+      max-height: calc(100% - 40px);
+    }
+
+    .note {
+      padding: 12px 15px;
+      background: #fff;
+      border-radius: var(--border-radius);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border-left: 4px solid var(--danger-color);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .note:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+
+    .note p {
+      margin: 0;
+      flex-grow: 1;
+    }
+
+    .note.green {
+      border-left-color: var(--success-color);
+    }
+
+    .note-actions {
+      display: flex;
+      gap: 5px;
+      opacity: 0.3;
+      transition: opacity 0.2s;
+    }
+
+    .note:hover .note-actions {
+      opacity: 1;
+    }
+
+    .note-actions button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .note-actions button:hover {
+      color: var(--primary-color);
+    }
+
+    /* Section sizes */
+    .key-partners,
+    .value-proposition,
+    .customer-segments {
+      grid-row: span 2;
+      grid-column: span 2;
+    }
+
+    .key-activities,
+    .customer-relationship {
+      grid-column: span 2;
+    }
+
+    .key-resources {
+      grid-column: 3 / span 2;
+      grid-row: 2;
+    }
+
+    .channels {
+      grid-column: 7 / span 2;
+      grid-row: 2;
+    }
+
+    .cost-structure,
+    .revenue-streams {
+      grid-column: span 5;
+    }
+
+    .cost-structure .notes-container,
+    .revenue-streams .notes-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    /* Empty state styling */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--text-secondary);
+      font-size: 14px;
+      text-align: center;
+      opacity: 0.7;
+    }
+
+    .empty-state svg {
+      margin-bottom: 10px;
+      width: 40px;
+      height: 40px;
+    }
+
+    /* Modal styles */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background-color: white;
+      border-radius: var(--border-radius);
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-20px);
+      transition: transform 0.3s;
+    }
+
+    .modal-backdrop.active .modal {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .modal-body {
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      font-size: 14px;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .note-type-toggle {
+      display: flex;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+
+    .note-type-toggle button {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      background: white;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .note-type-toggle button.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .note-type-toggle button:first-child.active {
+      background-color: var(--danger-color);
+    }
+
+    .note-type-toggle button:last-child.active {
+      background-color: var(--success-color);
+    }
+
+    /* Notification styles */
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      background-color: var(--success-color);
+      color: white;
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      z-index: 1001;
+    }
+
+    .notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Responsiveness */
+    @media (max-width: 900px) {
+      .bmc {
+        grid-template-columns: repeat(6, 1fr);
+      }
+
+      .key-partners,
+      .value-proposition,
+      .customer-segments {
+        grid-column: span 3;
+      }
+
+      .key-activities,
+      .customer-relationship,
+      .key-resources,
+      .channels {
+        grid-column: span 3;
+        grid-row: auto;
+      }
+
+      .cost-structure,
+      .revenue-streams {
+        grid-column: span 6;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .bmc {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .key-partners,
+      .value-proposition,
+      .customer-segments,
+      .key-activities,
+      .customer-relationship,
+      .key-resources,
+      .channels,
+      .cost-structure,
+      .revenue-streams {
+        grid-column: 1;
+        grid-row: auto;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <header>
+      <h1>Business Model Canvas</h1>
+      <div class="controls">
+        <button class="btn btn-outline" id="exportBtn">Export</button>
+        <button class="btn" id="saveBtn">Save</button>
+      </div>
+    </header>
+    
+    <div class="bmc" id="businessCanvas">
+      <!-- Sections will be generated by JavaScript -->
+    </div>
+  </div>
+
+  <!-- Modal for adding/editing notes -->
+  <div class="modal-backdrop" id="noteModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Add Note</h3>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="note-type-toggle">
+          <button class="active" data-type="regular">Regular</button>
+          <button data-type="green">Important</button>
+        </div>
+        <div class="form-group">
+          <label for="noteContent">Content</label>
+          <textarea class="form-control" id="noteContent" rows="3" placeholder="Enter note content..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="cancelBtn">Cancel</button>
+        <button class="btn" id="saveNoteBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification -->
+  <div class="notification" id="notification">Changes saved successfully!</div>
+
+  <script>
+    // Canvas structure definition
+    const canvasStructure = [
+      { id: 'key-partners', title: 'Key Partners', section: 'key-partners', notes: [
+        { id: 'note-1', content: 'Everyone', type: 'regular' },
+        { id: 'note-2', content: 'Even more', type: 'green' },
+        { id: 'note-3', content: 'Everyone', type: 'regular' },
+        { id: 'note-4', content: 'Even more', type: 'green' }
+      ]},
+      { id: 'key-activities', title: 'Key Activities', section: 'key-activities', notes: [
+        { id: 'note-5', content: 'All', type: 'regular' }
+      ]},
+      { id: 'key-resources', title: 'Key Resources', section: 'key-resources', notes: [] },
+      { id: 'value-proposition', title: 'Value Proposition', section: 'value-proposition', notes: [
+        { id: 'note-6', content: 'Everything', type: 'regular' }
+      ]},
+      { id: 'customer-relationship', title: 'Customer Relationship', section: 'customer-relationship', notes: [] },
+      { id: 'channels', title: 'Channels', section: 'channels', notes: [] },
+      { id: 'customer-segments', title: 'Customer Segments', section: 'customer-segments', notes: [] },
+      { id: 'cost-structure', title: 'Cost Structure', section: 'cost-structure', notes: [] },
+      { id: 'revenue-streams', title: 'Revenue Streams', section: 'revenue-streams', notes: [
+        { id: 'note-7', content: 'Everyone', type: 'regular' },
+        { id: 'note-8', content: 'Everyone', type: 'regular' },
+        { id: 'note-9', content: 'Everyone', type: 'regular' },
+        { id: 'note-10', content: 'Even more', type: 'green' }
+      ]}
+    ];
+
+    // DOM elements
+    const businessCanvas = document.getElementById('businessCanvas');
+    const noteModal = document.getElementById('noteModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const noteContent = document.getElementById('noteContent');
+    const closeModal = document.getElementById('closeModal');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const saveNoteBtn = document.getElementById('saveNoteBtn');
+    const typeButtons = document.querySelectorAll('.note-type-toggle button');
+    const notification = document.getElementById('notification');
+    const saveBtn = document.getElementById('saveBtn');
+    const exportBtn = document.getElementById('exportBtn');
+
+    // State variables
+    let currentSection = '';
+    let currentNoteId = '';
+    let isEditMode = false;
+    let selectedNoteType = 'regular';
+    let canvasData = [...canvasStructure]; // Clone the structure
+
+    // Initialize the canvas
+    function initCanvas() {
+      // Clear the canvas
+      businessCanvas.innerHTML = '';
+      
+      // Create each section
+      canvasData.forEach(section => {
+        const sectionElem = document.createElement('div');
+        sectionElem.className = `bmc-section ${section.section}`;
+        sectionElem.id = section.id;
+        
+        // Create header
+        const header = document.createElement('h3');
+        header.innerHTML = `
+          ${section.title}
+          <button class="add-note" data-section="${section.id}">+</button>
+        `;
+        sectionElem.appendChild(header);
+        
+        // Create notes container
+        const notesContainer = document.createElement('div');
+        notesContainer.className = 'notes-container';
+        
+        // Add notes or empty state
+        if (section.notes.length > 0) {
+          section.notes.forEach(note => {
+            const noteElem = createNoteElement(note, section.id);
+            notesContainer.appendChild(noteElem);
+          });
+        } else {
+          notesContainer.innerHTML = `
+            <div class="empty-state">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg>
+              <p>Click + to add ${section.title.toLowerCase()}</p>
+            </div>
+          `;
+        }
+        
+        sectionElem.appendChild(notesContainer);
+        businessCanvas.appendChild(sectionElem);
+      });
+      
+      // Add event listeners to add note buttons
+      document.querySelectorAll('.add-note').forEach(button => {
+        button.addEventListener('click', function() {
+          openAddNoteModal(this.dataset.section);
+        });
+      });
+    }
+
+    // Create note element
+    function createNoteElement(note, sectionId) {
+      const noteElem = document.createElement('div');
+      noteElem.className = `note ${note.type === 'green' ? 'green' : ''}`;
+      noteElem.setAttribute('data-id', note.id);
+      noteElem.innerHTML = `
+        <p>${note.content}</p>
+        <div class="note-actions">
+          <button title="Edit" class="edit-note" data-id="${note.id}" data-section="${sectionId}">✏️</button>
+          <button title="Delete" class="delete-note" data-id="${note.id}" data-section="${sectionId}">🗑️</button>
+        </div>
+      `;
+      
+      // Add event listeners for edit and delete buttons
+      noteElem.querySelector('.edit-note').addEventListener('click', function() {
+        openEditNoteModal(this.dataset.section, this.dataset.id);
+      });
+      
+      noteElem.querySelector('.delete-note').addEventListener('click', function() {
+        deleteNote(this.dataset.section, this.dataset.id);
+      });
+      
+      return noteElem;
+    }
+
+    // Open modal to add a new note
+    function openAddNoteModal(sectionId) {
+      modalTitle.textContent = 'Add Note';
+      noteContent.value = '';
+      currentSection = sectionId;
+      currentNoteId = '';
+      isEditMode = false;
+      
+      // Reset note type buttons
+      typeButtons.forEach(button => {
+        if (button.dataset.type === 'regular') {
+          button.classList.add('active');
+        } else {
+          button.classList.remove('active');
+        }
+      });
+      selectedNoteType = 'regular';
+      
+      // Show modal
+      noteModal.classList.add('active');
+    }
+
+    // Open modal to edit an existing note
+    function openEditNoteModal(sectionId, noteId) {
+      const section = canvasData.find(s => s.id === sectionId);
+      const note = section.notes.find(n => n.id === noteId);
+      
+      if (note) {
+        modalTitle.textContent = 'Edit Note';
+        noteContent.value = note.content;
+        currentSection = sectionId;
+        currentNoteId = noteId;
+        isEditMode = true;
+        selectedNoteType = note.type;
+        
+        // Set note type buttons
+        typeButtons.forEach(button => {
+          if (button.dataset.type === note.type) {
+            button.classList.add('active');
+          } else {
+            button.classList.remove('active');
+          }
+        });
+        
+        // Show modal
+        noteModal.classList.add('active');
+      }
+    }
+
+    // Save a new note or update an existing one
+    function saveNote() {
+      const content = noteContent.value.trim();
+      
+      if (!content) {
+        alert('Please enter note content');
+        return;
+      }
+      
+      const section = canvasData.find(s => s.id === currentSection);
+      
+      if (isEditMode) {
+        // Update existing note
+        const noteIndex = section.notes.findIndex(n => n.id === currentNoteId);
+        if (noteIndex !== -1) {
+          section.notes[noteIndex].content = content;
+          section.notes[noteIndex].type = selectedNoteType;
+        }
+      } else {
+        // Add new note
+        const newNoteId = 'note-' + Math.floor(Math.random() * 100000);
+        section.notes.push({
+          id: newNoteId,
+          content: content,
+          type: selectedNoteType
+        });
+      }
+      
+      // Close modal
+      noteModal.classList.remove('active');
+      
+      // Refresh canvas
+      initCanvas();
+      
+      // Show notification
+      showNotification('Note saved successfully!');
+    }
+
+    // Delete a note
+    function deleteNote(sectionId, noteId) {
+      if (confirm('Are you sure you want to delete this note?')) {
+        const section = canvasData.find(s => s.id === sectionId);
+        const noteIndex = section.notes.findIndex(n => n.id === noteId);
+        
+        if (noteIndex !== -1) {
+          section.notes.splice(noteIndex, 1);
+          
+          // Refresh canvas
+          initCanvas();
+          
+          // Show notification
+          showNotification('Note deleted successfully!');
+        }
+      }
+    }
+
+    // Show notification
+    function showNotification(message) {
+      notification.textContent = message;
+      notification.classList.add('show');
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+
+    // Save the entire canvas
+    function saveCanvas() {
+      // In a real app, this would save to a database or localStorage
+      localStorage.setItem('businessModelCanvas', JSON.stringify(canvasData));
+      showNotification('Canvas saved successfully!');
+    }
+
+    // Export the canvas
+    function exportCanvas() {
+      // Create a formatted text representation of the canvas
+      let exportText = 'BUSINESS MODEL CANVAS\n\n';
+      
+      canvasData.forEach(section => {
+        exportText += `${section.title.toUpperCase()}\n`;
+        
+        if (section.notes.length > 0) {
+          section.notes.forEach(note => {
+            exportText += `- ${note.content} ${note.type === 'green' ? '(Important)' : ''}\n`;
+          });
+        } else {
+          exportText += '- No notes\n';
+        }
+        
+        exportText += '\n';
+      });
+      
+      // Create a download link
+      const blob = new Blob([exportText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'business_model_canvas.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      // Try to load saved data from localStorage
+      const savedData = localStorage.getItem('businessModelCanvas');
+      if (savedData) {
+        try {
+          canvasData = JSON.parse(savedData);
+        } catch (e) {
+          console.error('Error loading saved data:', e);
+        }
+      }
+      
+      // Initialize the canvas
+      initCanvas();
+      
+      // Modal close button
+      closeModal.addEventListener('click', () => {
+        noteModal.classList.remove('active');
+      });
+      
+      // Cancel button
+      cancelBtn.addEventListener('click', () => {
+        noteModal.classList.remove('active');
+      });
+      
+      // Save note button
+      saveNoteBtn.addEventListener('click', saveNote);
+      
+      // Note type toggle buttons
+      typeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          typeButtons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          selectedNoteType = this.dataset.type;
+        });
+      });
+      
+      // Save canvas button
+      saveBtn.addEventListener('click', saveCanvas);
+      
+      // Export canvas button
+      exportBtn.addEventListener('click', exportCanvas);
+      
+      // Close modal when clicking outside
+      noteModal.addEventListener('click', function(event) {
+        if (event.target === noteModal) {
+          noteModal.classList.remove('active');
+        }
+      });
+      
+      // Handle Escape key to close modal
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && noteModal.classList.contains('active')) {
+          noteModal.classList.remove('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+# BMC
+bmc test
